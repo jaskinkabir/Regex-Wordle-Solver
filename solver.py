@@ -64,7 +64,8 @@ def gen_pattern(
             # NEED TO BE ABLE TO RECOGNIZE WHEN A LETTER IS BOTH GREEN AND YELLOW
             # Probably can just work this into the ui
             # Doesn't have to be handled by this function
-            cnt += 0
+            # Solution: Just add a letter into yellow and remove it when it becomes green
+            cnt += 1
         cur_range = gen_range_sing(char)
         
         # o[a-np-z]*
@@ -81,7 +82,7 @@ def gen_pattern(
 def search(pattern, words):
     matches = re.findall(pattern, words,re.MULTILINE)
     if not matches:
-        print("false")
+        print("Not found")
         return None
     return [''.join(match) for match in matches]
         
@@ -210,7 +211,103 @@ def search(pattern, words):
 # )
 
 
+#Found quark correctly
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','','','',''], 
+#             yellows = {'a' : 1, 'r' : 1}, 
+#             blacks='son', 
+#             forbidden_yellow_pos=['','','','a','r']
+#         ),
+#         words
+#     )
+# )
 
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','','','r',''], 
+#             yellows = {'a' : 1, 'r' : 1}, 
+#             blacks='sonlet', 
+#             forbidden_yellow_pos=['a','','','a','r']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','','','r',''], 
+#             yellows = {'a' : 1, 'r' : 1}, 
+#             blacks='sonlet', 
+#             forbidden_yellow_pos=['a','','','a','r']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','','','r',''], 
+#             yellows = {'a' : 1, 'r' : 1}, 
+#             blacks='sonletfiy', 
+#             forbidden_yellow_pos=['a','a','','a','r']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','','a','r',''], 
+#             yellows = { 'r' : 1}, 
+#             blacks='sonletfiychm', 
+#             forbidden_yellow_pos=['a','a','','a','r']
+#         ),
+#         words
+#     )
+# )
+
+# Found lemon
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','','','','n'], 
+#             yellows = {'l':1, 'e':1}, 
+#             blacks='ai', 
+#             forbidden_yellow_pos=['','l','','e','']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','e','','o','n'], 
+#             yellows = {'l':1 }, 
+#             blacks='aif', 
+#             forbidden_yellow_pos=['','l','l','','']
+#         ),
+#         words
+#     )
+# )
+
+print(
+    search(
+        gen_pattern(
+            greens=['','r','e','a',''], 
+            yellows = {}, 
+            blacks='livcm', 
+            forbidden_yellow_pos=['','','','','']
+        ),
+        words
+    )
+)
 
 def gen_range_sing(char: str):
     chr_num = ord(char)
