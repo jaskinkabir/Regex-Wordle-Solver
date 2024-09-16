@@ -69,7 +69,10 @@ def gen_pattern(
         cur_range = gen_range_sing(char)
         
         # o[a-np-z]*
-        cur_lookahead = fr'(?=^[{cur_range}]*{f"{char}[{cur_range}]*"*cnt}$)'
+        # Lookeahead needs to be adjusted to allow for geq cnt
+        #   Note: Max amount of duplicate chars in a word is 3
+        #   Lol all it took was removing the '$' at the end
+        cur_lookahead = fr'(?=^[{cur_range}]*{f"{char}[{cur_range}]*"*cnt})'
         pattern = cur_lookahead + pattern
         
     print(pattern)
