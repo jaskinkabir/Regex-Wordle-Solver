@@ -1,47 +1,82 @@
 import re
 
 words = ''
-with open(file='aesrl.txt', encoding='utf-8') as f:
+with open(file='words.txt', encoding='utf-8') as f:
     words = f.read()
 
+# 
 
-def gen_pattern(greens: str='', yellows: str='', blacks: str = '', forbidden_yellow_pos: dict = {}):           
+# ## New Strategy 
+# - Baseline pattern after lookahead `^['forbidden_pos blacks]*5$`
+#   - Greens should replace the char in the baseline pattern
+# - Ensure yellows are seen exactly n times with `(?!'.*y1'*(n1+1))(?!'y2'*(n2+1))...`
+#   - Make sure if a yellow is also a green, n for that char is +1
+# # Problems
+
+def gen_range_sing(char: str):
+    chr_num = ord(char)
+    
+    if chr_num == 97: #a
+        return 'b-z'
+    if chr_num == 98: #b
+        return 'ac-z'
+    if chr_num == 121: #y
+        return 'a-xz'
+    if chr_num == 122: #z
+        return 'a-y'
+    
+    
+    return f'a-{chr(chr_num-1)}{chr(chr_num+1)}-z'
+
+
+def gen_pattern(
+        greens: list[str]=['','','','',''], 
+        yellows: dict[str,int]={}, 
+        blacks: str = '', 
+        forbidden_yellow_pos: list[str]=['','','','','']
+    ):           
     
     num_yellow = len(yellows)
     num_green=len(greens)
     num_black = len(blacks)
     
     case_int = int(bool(num_yellow)) <<2 + int(bool(num_green)) <<1 + int(bool(num_black))
-    
-    accepted_chars_str = fr'([{yellows}])'
-    
-    # If yellow, accepted chars string must include yellow group and pattern must include non repeat logic
-    # If black, accepted chars string must include black group, but this group should not be captured
-    
-    def gen_accepted_chars(pos=1):
-        pos_yellows = yellows
-        forbidden_yellows = forbidden_yellow_pos.get(pos)
-        if forbidden_yellows is not None:
-            pos_yellows = ''.join( re.findall(fr'[^{forbidden_yellows}]',yellows) )
-        accepted_chars_str = fr'[]'
+    pattern = ''
+    for i in range(5):
+        if greens[i] != '':
+            pattern += greens[i]
+            continue
+        cur_block = '[^'
         
+        if blacks:
+            cur_block += blacks
         
+        if forbidden_yellow_pos[i]:
+            cur_block += forbidden_yellow_pos[i]
+        cur_block += ']'
+        pattern += cur_block
+    pattern = fr'^{pattern}$'
     
-    def gen_yellow_refs():
+    
+    for char, cnt in yellows.items():
+        if char in greens: 
+            # BIG PROBLEM HERE
+            # NEED TO BE ABLE TO RECOGNIZE WHEN A LETTER IS BOTH GREEN AND YELLOW
+            # Probably can just work this into the ui
+            # Doesn't have to be handled by this function
+            cnt += 0
+        cur_range = gen_range_sing(char)
         
-        for i in range(1,num_yellow+1):
-            yield fr'{accepted_chars_str}(?!' + r''.join([fr'\{i}|' for i in range(1,i+1)])[:-1]+f")"
-            
-    
-    
+        # o[a-np-z]*
+        cur_lookahead = fr'(?=^[{cur_range}]*{f"{char}[{cur_range}]*"*cnt}$)'
+        pattern = cur_lookahead + pattern
         
-    yellow_generator = gen_yellow_refs()
-    # group_str = ''.join([yellow_generator.__next__() for i in range(1,num_yellow+1)])[:-1]
-    # pattern = "^" + f"(?!{group_str})([{yellows}])" * (5-num_green)
-    pattern = r'^' + r''.join([yellow_generator.__next__() for i in range(num_yellow)])
     print(pattern)
-    
-    return fr'{pattern}'
+    return pattern
+
+
+
+
 
 def search(pattern, words):
     matches = re.findall(pattern, words,re.MULTILINE)
@@ -50,8 +85,147 @@ def search(pattern, words):
         return None
     return [''.join(match) for match in matches]
         
+# This is for 9/16/24 Wordle, answer was honey
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','','','',''], 
+#             yellows = {'o' : 1}, 
+#             blacks='audi', 
+#             forbidden_yellow_pos=['','','','','o']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','o','','e',''], 
+#             yellows = {'y': 1}, 
+#             blacks='audifr', 
+#             forbidden_yellow_pos=['','','y','','o']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','o','','e','y'], 
+#             yellows = {'o':1, 'y':1}, 
+#             blacks='audifrbg', 
+#             forbidden_yellow_pos=['','','y','','o']
+#         ),
+#         words
+#     )
+# )
+
+
+# Worked to find toxin
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','','','i',''], 
+#             yellows = {'o':1}, 
+#             blacks='aud', 
+#             forbidden_yellow_pos=['','','','','o']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','o','','i',''], 
+#             yellows = {'o':1}, 
+#             blacks='audbge', 
+#             forbidden_yellow_pos=['','','','','o']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','o','','i','n'], 
+#             yellows = {'o':1}, 
+#             blacks='audbgern', 
+#             forbidden_yellow_pos=['','','','','o']
+#         ),
+#         words
+#     )
+# )
+
+# Worked to find mince
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','','','',''], 
+#             yellows = {'e':1}, 
+#             blacks='hatr', 
+#             forbidden_yellow_pos=['','','','e','']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','','','c','e'], 
+#             yellows = {'i':1}, 
+#             blacks='hatrsp', 
+#             forbidden_yellow_pos=['','','i','','']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','i','n','c','e'], 
+#             yellows = {}, 
+#             blacks='hatrspw', 
+#             forbidden_yellow_pos=['','','','','']
+#         ),
+#         words
+#     )
+# )
+
+# print(
+#     search(
+#         gen_pattern(
+#             greens=['','i','n','c','e'], 
+#             yellows = {}, 
+#             blacks='hatrspwy', 
+#             forbidden_yellow_pos=['','','','','']
+#         ),
+#         words
+#     )
+# )
+
+
+
+
+def gen_range_sing(char: str):
+    chr_num = ord(char)
     
-#print(search(r'^([aesrl])(?!\1)([aesrl])(?!\1|\2)([aesrl])(?!\1|\2|\3)([aesrl])(?!\1|\2|\3|\4)([aesrl])', words))
+    if chr_num == 97: #a
+        return 'b-z'
+    if chr_num == 98: #b
+        return 'ac-z'
+    if chr_num == 121: #y
+        return 'a-xz'
+    if chr_num == 122: #z
+        return 'a-y'
+    
+    
+    return f'a-{chr(chr_num-1)}{chr(chr_num+1)}-z'
 
 
 def gen_range(yellows: list[str],blacks: list[str]):
@@ -104,7 +278,7 @@ def gen_range(yellows: list[str],blacks: list[str]):
     return ''.join([chr(yellow) for yellow in yellows]) + ' ' + range_str
     
 
-print(gen_range(yellows=['a','b','w','z'],blacks=['d','g','h','j','x'])) # EXCLUDES I
+
 
 #a-ce-z
 # a-ce-fh-z
