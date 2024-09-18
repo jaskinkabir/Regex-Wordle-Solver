@@ -40,7 +40,6 @@ def gen_pattern(
     num_green=len(greens)
     num_black = len(blacks)
     
-    case_int = int(bool(num_yellow)) <<2 + int(bool(num_green)) <<1 + int(bool(num_black))
     pattern = ''
     for i in range(5):
         if greens[i] != '':
