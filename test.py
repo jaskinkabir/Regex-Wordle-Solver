@@ -55,6 +55,7 @@ class Solver:
             pattern += cur_block
         pattern = fr'^{pattern}$'
         
+        
         for char, cnt in self.yellows.items():
             if cnt == 0:
                 continue
@@ -63,6 +64,10 @@ class Solver:
 
             cur_range = self.gen_yellow_range(char)
             
+            # o[a-np-z]*
+            # Lookeahead needs to be adjusted to allow for geq cnt
+            #   Note: Max amount of duplicate chars in a word is 3
+            #   Lol all it took was removing the '$' at the end
             cur_lookahead = fr'(?=^[{cur_range}]*{f"{char}[{cur_range}]*"*cnt})'
             pattern = cur_lookahead + pattern
             
@@ -97,13 +102,14 @@ class Solver:
             self.solutions = self.search(self.gen_pattern())
     def get_solutions(self):
         return self.solutions
-
+    
+    
 solver = Solver(word_file='words.txt')
 
 
 inp = ''
 colors = ''
-for i in range(4):
+while True:
 
     while True:
         inp = input("Input Guess: ")
