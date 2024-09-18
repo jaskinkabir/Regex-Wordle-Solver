@@ -49,7 +49,6 @@ class Solver:
             cur_lookahead = rf'(?=[a-z]*{rf"{char}[a-z]*"*cnt})'
             pattern = cur_lookahead + pattern
             
-        print(pattern)
         self.pattern = pattern
         return pattern
     
