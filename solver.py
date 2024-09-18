@@ -22,21 +22,6 @@ class Solver:
         with open(file=word_file) as f:
             self.words += f.read()
     
-    def gen_yellow_range(self,yellow_char: str):
-        chr_num = ord(yellow_char)
-        
-        if chr_num == 97: #a
-            return 'b-z'
-        if chr_num == 98: #b
-            return 'ac-z'
-        if chr_num == 121: #y
-            return 'a-xz'
-        if chr_num == 122: #z
-            return 'a-y'
-        
-        
-        return f'a-{chr(chr_num-1)}{chr(chr_num+1)}-z'
-    
     def gen_pattern(self):  
         
         pattern = ''
@@ -63,7 +48,7 @@ class Solver:
 
             cur_range = self.gen_yellow_range(char)
             
-            cur_lookahead = fr'(?=^[{cur_range}]*{f"{char}[{cur_range}]*"*cnt})'
+            cur_lookahead = rf'(?=[a-z]*{rf"{char}[a-z]*"*cnt})'
             pattern = cur_lookahead + pattern
             
         print(pattern)
