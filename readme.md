@@ -1,27 +1,16 @@
 # REGEX Wordle Solver
-The plan is to use Python to generate a single regex pattern based on your wordle attempts and apply this regex pattern to the word list to find all possible answers
+This script uses python to generate a regex pattern based on your previous wordle guesses that can find all possible solutions to your wordle puzzle. This uses the word list taken from the wordle source code
+# How to Use
+First open solver.py
 
-# Ideas for implementation
-- Use 1 positive lookaheads for the green characters
-    - `(?>.ar..)` means the word has 'ar' as the 2nd and third letters
-- Use a character range that excludes the black characters to eliminate words containing them
-    - `a-ce-hj-z` to exclude d and i
-- Stack negative lookaheads to ensure each yellow character is in the word however many times it must appear
-    - Haven't quite figured this one out yet
+1. Make a guess on Wordle
+2. Input the word you guessed into the terminal
+3. Input the color of each letter as a 5 letter string of either b (black), y (yellow), or g (green). For example: the guess below would be inputted as: `gybyb`
+  - ![example guess](image.png)
+4. Choose one of the possible solutions found by the solver
+5. Repeat
 
-## New Strategy 
-- Baseline pattern after lookahead `^['forbidden_yellow_pos blacks]*5$`
-  - Greens should replace the char in the baseline pattern
-- Ensure yellows are seen exactly n times with `(?!'.*y1'*n1)(?!'y2'*n2)...`
-  - Make sure if a yellow is also a green, n for that char is +1
-### Caveats
-- The ensure `n` occurences needed modification, but it now works
-- The problem now is that it should check for a word that contains at least n yellows not exactly n
-
-# Problems
-- **Problem:** I have no idea how to write regex
-   - **Solution:** After some reading I've determined I don't know if I will ever solve this problem
-- **Problem:** The range generation function does not work 
-    - **Solution**: Turns out it only needs to work to exclude a single character in this case so problem solved
-- **Problem:** The yellow checking pattern must match at least n instead of exactly n
+# Motivation
+Before this project, I had only used Regex by asking ChatGPT to write the pattern for me. I've always been curious about what each regex token actually does, so I started this project as a fun way to learn more about using Regex. 
+This was a big success. Now, instead of asking ChatGPT: 'Write a Regex pattern to match ...', I ask: 'Why doesn't this Regex pattern work? ..."
 
