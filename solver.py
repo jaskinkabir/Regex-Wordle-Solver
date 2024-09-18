@@ -45,13 +45,12 @@ class Solver:
                 continue
             if char in self.greens and self.greens.count(char) == cnt:
                 continue
-
-            cur_range = self.gen_yellow_range(char)
             
             cur_lookahead = rf'(?=[a-z]*{rf"{char}[a-z]*"*cnt})'
             pattern = cur_lookahead + pattern
             
         print(pattern)
+        self.pattern = pattern
         return pattern
     
     def search(self, pattern):
@@ -99,11 +98,11 @@ for i in range(4):
         print("Invalid guess. Must be 5 lowercase letters")
     guess = inp
     while True:
-        inp = input("Input Guess: ")
+        inp = input("Input Colors: ")
         if re.match(r'^[gby]{5}$', inp) is not None:
             break
         if inp == '0':
             break
-        print("Invalid guess. Must be 5 instances of [bgy]")
+        print("Invalid colors. Must be 5 instances of [bgy]")
     solver.add_guess(guess, inp)
     print(solver.get_solutions())
