@@ -80,5 +80,3 @@ class Solver:
             self.solutions = self.search(self.gen_pattern())
     def get_solutions(self):
         return self.solutions
-
-solver = Solver(word_file='words.txt')
