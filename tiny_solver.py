@@ -2,7 +2,7 @@ import re
 class Solver:
     def __init__(self, word_file='words.txt'): self.words = [line.strip() for line in open(word_file).readlines()]
     def apply(self, pattern, negate=True): self.words = [word for word in self.words if bool(re.match(pattern, word)) != negate]
-    def guess(self, guess: str, colors: str):
+    def guess(self, guess, colors):
         for i, (c, color) in enumerate(zip(guess, colors), start=1):
             match color:
                 case 'b' | 'y': self.apply(f".*{c}.*", negate=color=='b')
