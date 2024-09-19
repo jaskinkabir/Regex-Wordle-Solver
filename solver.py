@@ -82,26 +82,3 @@ class Solver:
         return self.solutions
 
 solver = Solver(word_file='words.txt')
-
-
-inp = ''
-colors = ''
-for i in range(4):
-
-    while True:
-        inp = input("Input Guess: ")
-        if re.match(r'^[a-z]{5}$', inp) is not None:
-            break
-        if inp == '0':
-            break
-        print("Invalid guess. Must be 5 lowercase letters")
-    guess = inp
-    while True:
-        inp = input("Input Colors: ")
-        if re.match(r'^[gby]{5}$', inp) is not None:
-            break
-        if inp == '0':
-            break
-        print("Invalid colors. Must be 5 instances of [bgy]")
-    solver.add_guess(guess, inp)
-    print(solver.get_solutions())
