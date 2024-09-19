@@ -59,7 +59,7 @@ class Solver:
             return None
         return [''.join(match) for match in matches]
     
-    def add_guess(self, guess: str, colors: str):
+    def guess(self, guess: str, colors: str):
             self.yellows = {}
             if len(guess) != 5 or len(colors) != 5:
                 raise ValueError("Guess and colors must be len 5")
